@@ -1,0 +1,53 @@
+.686
+.model flat
+extern __read: PROC
+extern __write: PROC
+extern _ExitProcess@4: PROC
+public _main
+.code
+
+wczytaj_do_EAX PROC
+push ebx
+push ecx
+push edx
+push esi
+push edi
+push ebp
+mov ebp,esp
+sub esp,12
+mov edi,esp
+push dword ptr 12
+push edi
+push dword ptr 0
+call __read
+add esp,24
+
+mov eax,0
+mov ebx,10
+pobieraj_znaki:
+	mov cl,[edi]
+	inc edi
+	cmp cl,10
+	je byl_enter
+	sub cl,30h
+	movzx ecx,cl
+	mul ebx
+	add eax,ecx
+	jmp pobieraj_znaki
+byl_enter:
+	pop ebx
+	pop ecx
+	pop edx
+	pop esi
+	pop edi
+	pop ebp
+	ret
+wczytaj_do_EAX ENDP
+
+
+_main PROC
+call wczytaj_do_EAX
+push 0
+call _ExitProcess@4
+_main ENDP
+END
